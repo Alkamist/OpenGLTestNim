@@ -393,176 +393,170 @@ type
   GLFWcursor* = ptr object
 
   GLFWvidmode* = object
-    width*: int32
-    height*: int32
-    redBits*: int32
-    greenBits*: int32
-    blueBits*: int32
-    refreshRate*: int32
+    width*, height*: cint
+    redBits*, greenBits*, blueBits*: cint
+    refreshRate*: cint
 
   GLFWgammaramp* = object
-    red*: uint16
-    green*: uint16
-    blue*: uint16
-    size*: uint32
+    red*, green*, blue*: ptr cushort
+    size*: cuint
 
   GLFWimage* = object
-    width*: int32
-    height*: int32
+    width*, height*: cint
     pixels*: ptr cuchar
 
   GLFWgamepadstate* = object
-    buttons*: array[15, bool]
-    axes*: array[6, float32]
+    buttons*: array[15, cuchar]
+    axes*: array[6, cfloat]
 
   GLFWglproc* = pointer
   GLFWvkProc* = pointer
-  GLFWerrorfun* = proc(error_code: int32, description: cstring): void {.cdecl.}
-  GLFWwindowposfun* = proc(window: GLFWwindow, xpos: int32, ypos: int32): void {.cdecl.}
-  GLFWwindowsizefun* = proc(window: GLFWwindow, width: int32, height: int32): void {.cdecl.}
+  GLFWerrorfun* = proc(error_code: cint, description: cstring): void {.cdecl.}
+  GLFWwindowposfun* = proc(window: GLFWwindow, xpos, ypos: cint): void {.cdecl.}
+  GLFWwindowsizefun* = proc(window: GLFWwindow, width, height: cint): void {.cdecl.}
   GLFWwindowclosefun* = proc(window: GLFWwindow): void {.cdecl.}
   GLFWwindowrefreshfun* = proc(window: GLFWwindow): void {.cdecl.}
-  GLFWwindowfocusfun* = proc(window: GLFWwindow, focused: bool): void {.cdecl.}
-  GLFWwindowiconifyfun* = proc(window: GLFWwindow, iconified: bool): void {.cdecl.}
-  GLFWwindowmaximizefun* = proc(window: GLFWwindow, maximized: int32): void {.cdecl.}
-  GLFWframebuffersizefun* = proc(window: GLFWwindow, width: int32, height: int32): void {.cdecl.}
-  GLFWwindowcontentscalefun* = proc(window: GLFWwindow, xscale: float32, yscale: float32): void {.cdecl.}
-  GLFWmousebuttonfun* = proc(window: GLFWwindow, button: int32, action: int32, mods: int32): void {.cdecl.}
-  GLFWcursorposfun* = proc(window: GLFWwindow, xpos: float64, ypos: float64): void {.cdecl.}
-  GLFWcursorenterfun* = proc(window: GLFWwindow, entered: bool): void {.cdecl.}
-  GLFWscrollfun* = proc(window: GLFWwindow, xoffset: float64, yoffset: float64): void {.cdecl.}
-  GLFWkeyfun* = proc(window: GLFWwindow, key: int32, scancode: int32, action: int32, mods: int32): void {.cdecl.}
-  GLFWcharfun* = proc(window: GLFWwindow, codepoint: uint32): void {.cdecl.}
-  GLFWcharmodsfun* = proc(window: GLFWwindow, codepoint: uint32, mods: int32): void {.cdecl.}
-  GLFWdropfun* = proc(window: GLFWwindow, path_count: int32, paths: cstringArray): void {.cdecl.}
-  GLFWmonitorfun* = proc(monitor: GLFWmonitor, event: int32): void {.cdecl.}
-  GLFWjoystickfun* = proc(jid: int32, event: int32): void {.cdecl.}
+  GLFWwindowfocusfun* = proc(window: GLFWwindow, focused: cint): void {.cdecl.}
+  GLFWwindowiconifyfun* = proc(window: GLFWwindow, iconified: cint): void {.cdecl.}
+  GLFWwindowmaximizefun* = proc(window: GLFWwindow, maximized: cint): void {.cdecl.}
+  GLFWframebuffersizefun* = proc(window: GLFWwindow, width, height: cint): void {.cdecl.}
+  GLFWwindowcontentscalefun* = proc(window: GLFWwindow, xscale, yscale: cfloat): void {.cdecl.}
+  GLFWmousebuttonfun* = proc(window: GLFWwindow, button, action, mods: cint): void {.cdecl.}
+  GLFWcursorposfun* = proc(window: GLFWwindow, xpos, ypos: cdouble): void {.cdecl.}
+  GLFWcursorenterfun* = proc(window: GLFWwindow, entered: cint): void {.cdecl.}
+  GLFWscrollfun* = proc(window: GLFWwindow, xoffset, yoffset: cdouble): void {.cdecl.}
+  GLFWkeyfun* = proc(window: GLFWwindow, key, scancode, action, mods: cint): void {.cdecl.}
+  GLFWcharfun* = proc(window: GLFWwindow, codepoint: cuint): void {.cdecl.}
+  GLFWcharmodsfun* = proc(window: GLFWwindow, codepoint: cuint, mods: cint): void {.cdecl.}
+  GLFWdropfun* = proc(window: GLFWwindow, path_count: cint, paths: cstringArray): void {.cdecl.}
+  GLFWmonitorfun* = proc(monitor: GLFWmonitor, event: cint): void {.cdecl.}
+  GLFWjoystickfun* = proc(jid, event: cint): void {.cdecl.}
 
 when defined(useGlfwDll):
-  {.push dynlib: glfwDll, cdecl.}
+  {.push importc, dynlib: glfwDll, cdecl.}
 else:
-  {.push cdecl.}
+  {.push importc, cdecl.}
 
-proc glfwInit*(): bool {.importc.}
-proc glfwTerminate*(): void {.importc.}
-proc glfwInitHint*(hint: int32, value: int32): void {.importc.}
-proc glfwGetVersion*(major: ptr int32, minor: ptr int32, rev: ptr int32): void {.importc.}
-proc glfwGetVersionString*(): cstring {.importc.}
-proc glfwGetError*(description: cstringArray): int32 {.importc.}
-proc glfwSetErrorCallback*(callback: GLFWErrorfun): GLFWErrorfun {.importc.}
-proc glfwGetMonitors*(count: ptr int32): ptr UncheckedArray[GLFWmonitor] {.importc.}
-proc glfwGetPrimaryMonitor*(): GLFWmonitor {.importc.}
-proc glfwGetMonitorPos*(monitor: GLFWmonitor, xpos: ptr int32, ypos: ptr int32): void {.importc.}
-proc glfwGetMonitorWorkarea*(monitor: GLFWmonitor, xpos: ptr int32, ypos: ptr int32, width: ptr int32, height: ptr int32): void {.importc.}
-proc glfwGetMonitorPhysicalSize*(monitor: GLFWmonitor, widthMM: ptr int32, heightMM: ptr int32): void {.importc.}
-proc glfwGetMonitorContentScale*(monitor: GLFWmonitor, xscale: ptr float32, yscale: ptr float32): void {.importc.}
-proc glfwGetMonitorName*(monitor: GLFWmonitor): cstring {.importc.}
-proc glfwSetMonitorUserPointer*(monitor: GLFWmonitor, pointer: pointer): void {.importc.}
-proc glfwGetMonitorUserPointer*(monitor: GLFWmonitor): pointer {.importc.}
-proc glfwSetMonitorCallback*(callback: GLFWMonitorfun): GLFWMonitorfun {.importc.}
-proc glfwGetVideoModes*(monitor: GLFWmonitor, count: ptr int32): ptr GLFWVidmode {.importc.}
-proc glfwGetVideoMode*(monitor: GLFWmonitor): ptr GLFWVidmode {.importc.}
-proc glfwSetGamma*(monitor: GLFWmonitor, gamma: float32): void {.importc.}
-proc glfwGetGammaRamp*(monitor: GLFWmonitor): ptr GLFWGammaramp {.importc.}
-proc glfwSetGammaRamp*(monitor: GLFWmonitor, ramp: ptr GLFWGammaramp): void {.importc.}
-proc glfwDefaultWindowHints*(): void {.importc.}
-proc glfwWindowHint*(hint: int32, value: int32): void {.importc.}
-proc glfwWindowHintString*(hint: int32, value: cstring): void {.importc.}
-proc glfwCreateWindow*(width: int32, height: int32, title: cstring, monitor: GLFWmonitor, share: GLFWwindow): GLFWwindow {.importc.}
-proc glfwDestroyWindow*(window: GLFWwindow): void {.importc.}
-proc glfwWindowShouldClose*(window: GLFWwindow): bool {.importc.}
-proc glfwSetWindowShouldClose*(window: GLFWwindow, value: bool): void {.importc.}
-proc glfwSetWindowTitle*(window: GLFWwindow, title: cstring): void {.importc.}
-proc glfwSetWindowIcon*(window: GLFWwindow, count: int32, images: ptr GLFWimage): void {.importc.}
-proc glfwGetWindowPos*(window: GLFWwindow, xpos: ptr int32, ypos: ptr int32): void {.importc.}
-proc glfwSetWindowPos*(window: GLFWwindow, xpos: int32, ypos: int32): void {.importc.}
-proc glfwGetWindowSize*(window: GLFWwindow, width: ptr int32, height: ptr int32): void {.importc.}
-proc glfwSetWindowSizeLimits*(window: GLFWwindow, minwidth: int32, minheight: int32, maxwidth: int32, maxheight: int32): void {.importc.}
-proc glfwSetWindowAspectRatio*(window: GLFWwindow, numer: int32, denom: int32): void {.importc.}
-proc glfwSetWindowSize*(window: GLFWwindow, width: int32, height: int32): void {.importc.}
-proc glfwGetFramebufferSize*(window: GLFWwindow, width: ptr int32, height: ptr int32): void {.importc.}
-proc glfwGetWindowFrameSize*(window: GLFWwindow, left: ptr int32, top: ptr int32, right: ptr int32, bottom: ptr int32): void {.importc.}
-proc glfwGetWindowContentScale*(window: GLFWwindow, xscale: ptr float32, yscale: ptr float32): void {.importc.}
-proc glfwGetWindowOpacity*(window: GLFWwindow): float32 {.importc.}
-proc glfwSetWindowOpacity*(window: GLFWwindow, opacity: float32): void {.importc.}
-proc glfwIconifyWindow*(window: GLFWwindow): void {.importc.}
-proc glfwRestoreWindow*(window: GLFWwindow): void {.importc.}
-proc glfwMaximizeWindow*(window: GLFWwindow): void {.importc.}
-proc glfwShowWindow*(window: GLFWwindow): void {.importc.}
-proc glfwHideWindow*(window: GLFWwindow): void {.importc.}
-proc glfwFocusWindow*(window: GLFWwindow): void {.importc.}
-proc glfwRequestWindowAttention*(window: GLFWwindow): void {.importc.}
-proc glfwGetWindowMonitor*(window: GLFWwindow): GLFWmonitor {.importc.}
-proc glfwSetWindowMonitor*(window: GLFWwindow, monitor: GLFWmonitor, xpos: int32, ypos: int32, width: int32, height: int32, refreshRate: int32): void {.importc.}
-proc glfwGetWindowAttrib*(window: GLFWwindow, attrib: int32): int32 {.importc.}
-proc glfwSetWindowAttrib*(window: GLFWwindow, attrib: int32, value: int32): void {.importc.}
-proc glfwSetWindowUserPointer*(window: GLFWwindow, pointer: pointer): void {.importc.}
-proc glfwGetWindowUserPointer*(window: GLFWwindow): pointer {.importc.}
-proc glfwSetWindowPosCallback*(window: GLFWwindow, callback: GLFWWindowposfun): GLFWWindowposfun {.importc.}
-proc glfwSetWindowSizeCallback*(window: GLFWwindow, callback: GLFWWindowsizefun): GLFWWindowsizefun {.importc.}
-proc glfwSetWindowCloseCallback*(window: GLFWwindow, callback: GLFWWindowclosefun): GLFWWindowclosefun {.importc.}
-proc glfwSetWindowRefreshCallback*(window: GLFWwindow, callback: GLFWWindowrefreshfun): GLFWWindowrefreshfun {.importc.}
-proc glfwSetWindowFocusCallback*(window: GLFWwindow, callback: GLFWWindowfocusfun): GLFWWindowfocusfun {.importc.}
-proc glfwSetWindowIconifyCallback*(window: GLFWwindow, callback: GLFWWindowiconifyfun): GLFWWindowiconifyfun {.importc.}
-proc glfwSetWindowMaximizeCallback*(window: GLFWwindow, callback: GLFWWindowmaximizefun): GLFWWindowmaximizefun {.importc.}
-proc glfwSetFramebufferSizeCallback*(window: GLFWwindow, callback: GLFWFramebuffersizefun): GLFWFramebuffersizefun {.importc.}
-proc glfwSetWindowContentScaleCallback*(window: GLFWwindow, callback: GLFWWindowcontentscalefun): GLFWWindowcontentscalefun {.importc.}
-proc glfwPollEvents*(): void {.importc.}
-proc glfwWaitEvents*(): void {.importc.}
-proc glfwWaitEventsTimeout*(timeout: float64): void {.importc.}
-proc glfwPostEmptyEvent*(): void {.importc.}
-proc glfwGetInputMode*(window: GLFWwindow, mode: int32): int32 {.importc.}
-proc glfwSetInputMode*(window: GLFWwindow, mode: int32, value: int32): void {.importc.}
-proc glfwRawMouseMotionSupported*(): int32 {.importc.}
-proc glfwGetKeyName*(key: int32, scancode: int32): cstring {.importc.}
-proc glfwGetKeyScancode*(key: int32): int32 {.importc.}
-proc glfwGetKey*(window: GLFWwindow, key: int32): int32 {.importc.}
-proc glfwGetMouseButton*(window: GLFWwindow, button: int32): int32 {.importc.}
-proc glfwGetCursorPos*(window: GLFWwindow, xpos: ptr float64, ypos: ptr float64): void {.importc.}
-proc glfwSetCursorPos*(window: GLFWwindow, xpos: float64, ypos: float64): void {.importc.}
-proc glfwCreateCursor*(image: ptr GLFWimage, xhot: int32, yhot: int32): GLFWcursor {.importc.}
-proc glfwCreateStandardCursor*(shape: int32): GLFWcursor {.importc.}
-proc glfwDestroyCursor*(cursor: GLFWcursor): void {.importc.}
-proc glfwSetCursor*(window: GLFWwindow, cursor: GLFWcursor): void {.importc.}
-proc glfwSetKeyCallback*(window: GLFWwindow, callback: GLFWKeyfun): GLFWKeyfun {.importc.}
-proc glfwSetCharCallback*(window: GLFWwindow, callback: GLFWCharfun): GLFWCharfun {.importc.}
-proc glfwSetCharModsCallback*(window: GLFWwindow, callback: GLFWCharmodsfun): GLFWCharmodsfun {.importc.}
-proc glfwSetMouseButtonCallback*(window: GLFWwindow, callback: GLFWMousebuttonfun): GLFWMousebuttonfun {.importc.}
-proc glfwSetCursorPosCallback*(window: GLFWwindow, callback: GLFWCursorposfun): GLFWCursorposfun {.importc.}
-proc glfwSetCursorEnterCallback*(window: GLFWwindow, callback: GLFWCursorenterfun): GLFWCursorenterfun {.importc.}
-proc glfwSetScrollCallback*(window: GLFWwindow, callback: GLFWScrollfun): GLFWScrollfun {.importc.}
-proc glfwSetDropCallback*(window: GLFWwindow, callback: GLFWDropfun): GLFWDropfun {.importc.}
-proc glfwJoystickPresent*(jid: int32): int32 {.importc.}
-proc glfwGetJoystickAxes*(jid: int32, count: ptr int32): ptr float32 {.importc.}
-proc glfwGetJoystickButtons*(jid: int32, count: ptr int32): ptr cuchar {.importc.}
-proc glfwGetJoystickHats*(jid: int32, count: ptr int32): ptr cuchar {.importc.}
-proc glfwGetJoystickName*(jid: int32): cstring {.importc.}
-proc glfwGetJoystickGUID*(jid: int32): cstring {.importc.}
-proc glfwSetJoystickUserPointer*(jid: int32, pointer: pointer): void {.importc.}
-proc glfwGetJoystickUserPointer*(jid: int32): pointer {.importc.}
-proc glfwJoystickIsGamepad*(jid: int32): int32 {.importc.}
-proc glfwSetJoystickCallback*(callback: GLFWJoystickfun): GLFWJoystickfun {.importc.}
-proc glfwUpdateGamepadMappings*(string: cstring): int32 {.importc.}
-proc glfwGetGamepadName*(jid: int32): cstring {.importc.}
-proc glfwGetGamepadState*(jid: int32, state: ptr GLFWGamepadstate): int32 {.importc.}
-proc glfwSetClipboardString*(window: GLFWwindow, string: cstring): void {.importc.}
-proc glfwGetClipboardString*(window: GLFWwindow): cstring {.importc.}
-proc glfwGetTime*(): float64 {.importc.}
-proc glfwSetTime*(time: float64): void {.importc.}
-proc glfwGetTimerValue*(): uint64 {.importc.}
-proc glfwGetTimerFrequency*(): uint64 {.importc.}
-proc glfwMakeContextCurrent*(window: GLFWwindow): void {.importc.}
-proc glfwGetCurrentContext*(): GLFWwindow {.importc.}
-proc glfwSwapBuffers*(window: GLFWwindow): void {.importc.}
-proc glfwSwapInterval*(interval: int32): void {.importc.}
-proc glfwExtensionSupported*(extension: cstring): int32 {.importc.}
-proc glfwGetProcAddress*(procname: cstring): GLFWGlproc {.importc.}
-proc glfwVulkanSupported*(): bool {.importc.}
-proc glfwGetRequiredInstanceExtensions*(count: ptr uint32): cstringArray {.importc.}
+proc glfwInit*(): cint
+proc glfwTerminate*()
+proc glfwInitHint*(hint, value: cint)
+proc glfwGetVersion*(major, minor, rev: ptr cint)
+proc glfwGetVersionString*(): cstring
+proc glfwGetError*(description: cstringArray): cint
+proc glfwSetErrorCallback*(callback: GLFWErrorfun): GLFWErrorfun
+proc glfwGetMonitors*(count: ptr cint): ptr UncheckedArray[GLFWmonitor]
+proc glfwGetPrimaryMonitor*(): GLFWmonitor
+proc glfwGetMonitorPos*(monitor: GLFWmonitor, xpos, ypos: ptr cint)
+proc glfwGetMonitorWorkarea*(monitor: GLFWmonitor, xpos, ypos, width, height: ptr cint)
+proc glfwGetMonitorPhysicalSize*(monitor: GLFWmonitor, widthMM, heightMM: ptr cint)
+proc glfwGetMonitorContentScale*(monitor: GLFWmonitor, xscale, yscale: ptr cfloat)
+proc glfwGetMonitorName*(monitor: GLFWmonitor): cstring
+proc glfwSetMonitorUserPointer*(monitor: GLFWmonitor, `pointer`: pointer)
+proc glfwGetMonitorUserPointer*(monitor: GLFWmonitor): pointer
+proc glfwSetMonitorCallback*(callback: GLFWMonitorfun): GLFWMonitorfun
+proc glfwGetVideoModes*(monitor: GLFWmonitor, count: ptr cint): ptr GLFWVidmode
+proc glfwGetVideoMode*(monitor: GLFWmonitor): ptr GLFWVidmode
+proc glfwSetGamma*(monitor: GLFWmonitor, gamma: cfloat)
+proc glfwGetGammaRamp*(monitor: GLFWmonitor): ptr GLFWGammaramp
+proc glfwSetGammaRamp*(monitor: GLFWmonitor, ramp: ptr GLFWGammaramp)
+proc glfwDefaultWindowHints*()
+proc glfwWindowHint*(hint, value: cint)
+proc glfwWindowHintString*(hint: cint, value: cstring)
+proc glfwCreateWindow*(width, height: cint, title: cstring, monitor: GLFWmonitor, share: GLFWwindow): GLFWwindow
+proc glfwDestroyWindow*(window: GLFWwindow)
+proc glfwWindowShouldClose*(window: GLFWwindow): cint
+proc glfwSetWindowShouldClose*(window: GLFWwindow, value: cint)
+proc glfwSetWindowTitle*(window: GLFWwindow, title: cstring)
+proc glfwSetWindowIcon*(window: GLFWwindow, count: cint, images: ptr GLFWimage)
+proc glfwGetWindowPos*(window: GLFWwindow, xpos, ypos: ptr cint)
+proc glfwSetWindowPos*(window: GLFWwindow, xpos, ypos: cint)
+proc glfwGetWindowSize*(window: GLFWwindow, width, height: ptr cint)
+proc glfwSetWindowSizeLimits*(window: GLFWwindow, minwidth, minheight, maxwidth, maxheight: cint)
+proc glfwSetWindowAspectRatio*(window: GLFWwindow, numer, denom: cint)
+proc glfwSetWindowSize*(window: GLFWwindow, width, height: cint)
+proc glfwGetFramebufferSize*(window: GLFWwindow, width, height: ptr cint)
+proc glfwGetWindowFrameSize*(window: GLFWwindow, left, top, right, bottom: ptr cint)
+proc glfwGetWindowContentScale*(window: GLFWwindow, xscale, yscale: ptr cfloat)
+proc glfwGetWindowOpacity*(window: GLFWwindow): cfloat
+proc glfwSetWindowOpacity*(window: GLFWwindow, opacity: cfloat)
+proc glfwIconifyWindow*(window: GLFWwindow)
+proc glfwRestoreWindow*(window: GLFWwindow)
+proc glfwMaximizeWindow*(window: GLFWwindow)
+proc glfwShowWindow*(window: GLFWwindow)
+proc glfwHideWindow*(window: GLFWwindow)
+proc glfwFocusWindow*(window: GLFWwindow)
+proc glfwRequestWindowAttention*(window: GLFWwindow)
+proc glfwGetWindowMonitor*(window: GLFWwindow): GLFWmonitor
+proc glfwSetWindowMonitor*(window: GLFWwindow, monitor: GLFWmonitor, xpos, ypos, width, height, refreshRate: cint)
+proc glfwGetWindowAttrib*(window: GLFWwindow, attrib: cint): cint
+proc glfwSetWindowAttrib*(window: GLFWwindow, attrib, value: cint)
+proc glfwSetWindowUserPointer*(window: GLFWwindow, `pointer`: pointer)
+proc glfwGetWindowUserPointer*(window: GLFWwindow): pointer
+proc glfwSetWindowPosCallback*(window: GLFWwindow, callback: GLFWWindowposfun): GLFWWindowposfun
+proc glfwSetWindowSizeCallback*(window: GLFWwindow, callback: GLFWWindowsizefun): GLFWWindowsizefun
+proc glfwSetWindowCloseCallback*(window: GLFWwindow, callback: GLFWWindowclosefun): GLFWWindowclosefun
+proc glfwSetWindowRefreshCallback*(window: GLFWwindow, callback: GLFWWindowrefreshfun): GLFWWindowrefreshfun
+proc glfwSetWindowFocusCallback*(window: GLFWwindow, callback: GLFWWindowfocusfun): GLFWWindowfocusfun
+proc glfwSetWindowIconifyCallback*(window: GLFWwindow, callback: GLFWWindowiconifyfun): GLFWWindowiconifyfun
+proc glfwSetWindowMaximizeCallback*(window: GLFWwindow, callback: GLFWWindowmaximizefun): GLFWWindowmaximizefun
+proc glfwSetFramebufferSizeCallback*(window: GLFWwindow, callback: GLFWFramebuffersizefun): GLFWFramebuffersizefun
+proc glfwSetWindowContentScaleCallback*(window: GLFWwindow, callback: GLFWWindowcontentscalefun): GLFWWindowcontentscalefun
+proc glfwPollEvents*()
+proc glfwWaitEvents*()
+proc glfwWaitEventsTimeout*(timeout: cdouble)
+proc glfwPostEmptyEvent*()
+proc glfwGetInputMode*(window: GLFWwindow, mode: cint): cint
+proc glfwSetInputMode*(window: GLFWwindow, mode, value: cint)
+proc glfwRawMouseMotionSupported*(): cint
+proc glfwGetKeyName*(key, scancode: cint): cstring
+proc glfwGetKeyScancode*(key: cint): cint
+proc glfwGetKey*(window: GLFWwindow, key: cint): cint
+proc glfwGetMouseButton*(window: GLFWwindow, button: cint): cint
+proc glfwGetCursorPos*(window: GLFWwindow, xpos, ypos: ptr cdouble)
+proc glfwSetCursorPos*(window: GLFWwindow, xpos, ypos: cdouble)
+proc glfwCreateCursor*(image: ptr GLFWimage, xhot, yhot: cint): GLFWcursor
+proc glfwCreateStandardCursor*(shape: cint): GLFWcursor
+proc glfwDestroyCursor*(cursor: GLFWcursor)
+proc glfwSetCursor*(window: GLFWwindow, cursor: GLFWcursor)
+proc glfwSetKeyCallback*(window: GLFWwindow, callback: GLFWKeyfun): GLFWKeyfun
+proc glfwSetCharCallback*(window: GLFWwindow, callback: GLFWCharfun): GLFWCharfun
+proc glfwSetCharModsCallback*(window: GLFWwindow, callback: GLFWCharmodsfun): GLFWCharmodsfun
+proc glfwSetMouseButtonCallback*(window: GLFWwindow, callback: GLFWMousebuttonfun): GLFWMousebuttonfun
+proc glfwSetCursorPosCallback*(window: GLFWwindow, callback: GLFWCursorposfun): GLFWCursorposfun
+proc glfwSetCursorEnterCallback*(window: GLFWwindow, callback: GLFWCursorenterfun): GLFWCursorenterfun
+proc glfwSetScrollCallback*(window: GLFWwindow, callback: GLFWScrollfun): GLFWScrollfun
+proc glfwSetDropCallback*(window: GLFWwindow, callback: GLFWDropfun): GLFWDropfun
+proc glfwJoystickPresent*(jid: cint): cint
+proc glfwGetJoystickAxes*(jid: cint, count: ptr cint): ptr cfloat
+proc glfwGetJoystickButtons*(jid: cint, count: ptr cint): ptr cuchar
+proc glfwGetJoystickHats*(jid: cint, count: ptr cint): ptr cuchar
+proc glfwGetJoystickName*(jid: cint): cstring
+proc glfwGetJoystickGUID*(jid: cint): cstring
+proc glfwSetJoystickUserPointer*(jid: cint, `pointer`: pointer)
+proc glfwGetJoystickUserPointer*(jid: cint): pointer
+proc glfwJoystickIsGamepad*(jid: cint): cint
+proc glfwSetJoystickCallback*(callback: GLFWJoystickfun): GLFWJoystickfun
+proc glfwUpdateGamepadMappings*(`string`: cstring): cint
+proc glfwGetGamepadName*(jid: cint): cstring
+proc glfwGetGamepadState*(jid: cint, state: ptr GLFWGamepadstate): cint
+proc glfwSetClipboardString*(window: GLFWwindow, `string`: cstring)
+proc glfwGetClipboardString*(window: GLFWwindow): cstring
+proc glfwGetTime*(): cdouble
+proc glfwSetTime*(time: cdouble)
+proc glfwGetTimerValue*(): uint64
+proc glfwGetTimerFrequency*(): uint64
+proc glfwMakeContextCurrent*(window: GLFWwindow)
+proc glfwGetCurrentContext*(): GLFWwindow
+proc glfwSwapBuffers*(window: GLFWwindow)
+proc glfwSwapInterval*(interval: cint)
+proc glfwExtensionSupported*(extension: cstring): cint
+proc glfwGetProcAddress*(procname: cstring): GLFWGlproc
+proc glfwVulkanSupported*(): cint
+proc glfwGetRequiredInstanceExtensions*(count: ptr uint32): cstringArray
 
 when defined(vulkan):
-  proc glfwGetInstanceProcAddress*(instance: VkInstance, procname: cstring): GLFWVkproc {.importc.}
-  proc glfwGetPhysicalDevicePresentationSupport*(instance: VkInstance, device: VkPhysicalDevice, queuefamily: uint32): int32 {.importc.}
-  proc glfwCreateWindowSurface*(instance: VkInstance, window: GLFWwindow, allocator: ptr VkAllocationCallbacks, surface: ptr VkSurfaceKHR): VkResult {.importc.}
+  proc glfwGetInstanceProcAddress*(instance: VkInstance, procname: cstring): GLFWVkproc
+  proc glfwGetPhysicalDevicePresentationSupport*(instance: VkInstance, device: VkPhysicalDevice, queuefamily: uint32): cint
+  proc glfwCreateWindowSurface*(instance: VkInstance, window: GLFWwindow, allocator: ptr VkAllocationCallbacks, surface: ptr VkSurfaceKHR): VkResult
 
 {.pop.}
